@@ -13,24 +13,30 @@ pipeline {
         stage('Setup Python Environment') {
             steps {
                 echo 'Setting up Python virtual environment...'
-                bat """
-                python -m venv venv
-                venv\\Scripts\\python -m pip install --upgrade pip
-                venv\\Scripts\\python -m pip install -r requirements.txt
-                venv\\Scripts\\python -m pip install pytest pytest-html pytest-cov
-                """
+                sh '''
+                python3 --version
+                python3 -m venv venv
+                venv/bin/python -m pip install --upgrade pip
+                venv/bin/python -m pip install pytest pytest-html pytest-cov
+                '''
+            }
+        }
+
+        stage('Verify Pytest') {
+            steps {
+                sh '''
+                venv/bin/python -m pytest --version
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo 'Running tests...'
-                bat """
-                venv\\Scripts\\python -m pytest --html=report.html --self-contained-html
-                """
+                sh '''
+                venv/bin/python -m pytest --html=report.html --self-contained-html
+                '''
             }
         }
-
     }
 
     post {
