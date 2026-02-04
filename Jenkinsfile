@@ -1,79 +1,27 @@
 pipeline {
     agent any
 
-    stages {
-
-        stage('Checkout Code') {
-            steps {
-                echo '📥 Cloning GitHub repository'
-                checkout scm
-            }pipeline {
-    agent any
+    environment {
+        PYTHON = 'C:\\Users\\dell\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+    }
 
     stages {
 
         stage('Checkout Code') {
             steps {
-                echo '📥 Cloning GitHub repository'
                 checkout scm
             }
         }
 
         stage('Check Python Version') {
             steps {
-                bat 'py --version'
+                bat "\"%PYTHON%\" --version"
             }
         }
 
         stage('Create Virtual Environment') {
             steps {
-                bat 'py -m venv venv'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                bat '''
-                venv\\Scripts\\activate
-                py -m pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat '''
-                venv\\Scripts\\activate
-                pytest
-                '''
-            }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ CI Pipeline completed successfully!'
-        }
-        failure {
-            echo '❌ CI Pipeline failed. Check logs.'
-        }
-    }
-}
-
-        }
-
-        stage('Check Python Version') {
-            steps {
-                bat 'python --version'
-            }
-        }
-
-        stage('Create Virtual Environment') {
-            steps {
-                bat '''
-                python -m venv venv
-                '''
+                bat "\"%PYTHON%\" -m venv venv"
             }
         }
 
@@ -99,11 +47,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ CI Pipeline completed successfully!'
+            echo '✅ CI Pipeline SUCCESS'
         }
         failure {
-            echo '❌ CI Pipeline failed. Check logs.'
+            echo '❌ CI Pipeline FAILED'
         }
     }
 }
-
