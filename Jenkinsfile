@@ -2,32 +2,54 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
+                echo '📥 Cloning GitHub repository'
                 checkout scm
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Check Python Version') {
             steps {
-                sh '''
-                python3 --version || python --version
-                python3 -m venv venv || python -m venv venv
-                . venv/bin/activate
-                pip install --upgrade pip
+                bat 'python --version'
+            }
+        }
+
+        stage('Create Virtual Environment') {
+            steps {
+                bat '''
+                python -m venv venv
+                '''
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat '''
+                venv\\Scripts\\activate
+                python -m pip install --upgrade pip
                 pip install -r requirements.txt
-                pip install pytest pytest-html pytest-cov
                 '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
+                bat '''
+                venv\\Scripts\\activate
                 pytest
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ CI Pipeline completed successfully!'
+        }
+        failure {
+            echo '❌ CI Pipeline failed. Check logs.'
         }
     }
 }
