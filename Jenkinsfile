@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.12'
-        }
-    }
+    agent any
 
     stages {
 
@@ -15,20 +11,28 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                sh '''
+                bat """
                 python --version
                 python -m venv venv
-                venv/bin/python -m pip install --upgrade pip
-                venv/bin/python -m pip install pytest pytest-html pytest-cov
-                '''
+                venv\\Scripts\\python -m pip install --upgrade pip
+                venv\\Scripts\\python -m pip install pytest pytest-html pytest-cov
+                """
+            }
+        }
+
+        stage('Verify Pytest') {
+            steps {
+                bat """
+                venv\\Scripts\\python -m pytest --version
+                """
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                venv/bin/python -m pytest --html=report.html --self-contained-html
-                '''
+                bat """
+                venv\\Scripts\\python -m pytest --html=report.html --self-contained-html
+                """
             }
         }
     }
