@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PYTHON = 'python3'
-    }
-
     stages {
 
         stage('Checkout Code') {
@@ -15,20 +11,20 @@ pipeline {
 
         stage('Check Python Version') {
             steps {
-                sh "$PYTHON --version"
+                sh 'python3 --version'
             }
         }
 
         stage('Create Virtual Environment') {
             steps {
-                sh "$PYTHON -m venv venv"
+                sh 'python3 -m venv venv'
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
@@ -38,7 +34,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 pytest
                 '''
             }
